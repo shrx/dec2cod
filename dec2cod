@@ -33,6 +33,6 @@ IFS=$'\n'; for i in $files
 					fi
 				fi
 			done
-		printf $codHead$main$sideText$sideboard$codFoot #> "$codName"
+		printf $codHead$main$sideText$sideboard$codFoot > "$codName"
 	done
 unset IFS
