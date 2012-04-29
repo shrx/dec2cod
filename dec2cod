@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# released under Creative Commons Attribution-ShareAlike 3.0
+# http://creativecommons.org/licenses/by-sa/3.0/
+# v0.5
+# 29. 3. 2012
+
+codHead="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<cockatrice_deck version=\"1\">\n    <deckname></deckname>\n    <comments></comments>\n    <zone name=\"main\">"
+codFoot="\n    </zone>\n</cockatrice_deck>\n"
+sideText=""
+files="$(ls -1|grep -i -e "\.mwdeck$" -e "\.dec$")"
+
+IFS=$'\n'; for i in $files
+	do
+		echo "converting $i"
+		codName=$(echo ${i%.*}".cod")
+		main=""
+		sideboard=""
+		sideboardTest=$(grep -ao "SB:" $i | wc -l | tr -d ' ')
+		if [ $sideboardTest != 0 ]; then
+			sideText="\n    </zone>\n    <zone name=\"side\">"
+		fi
+		emptyTrim=""
+		for j in $(cat $i)
+			do
+				if [[ "${j:0:2}" != "//" && $j =~ [^[:space:]] ]]; then
+					if [ "${j:0:3}" != "SB:" ]; then
+						jTrim=$(echo "$(echo $j | sed 's/^ *//;s/$//')" | sed 's/ \[\([A-Za-z0-9][A-Za-z0-9]*\)\]//')
+						main=$main"\n        <card number=\""${jTrim%% *}"\" price=\"0\" name=\""$(echo ${jTrim#* }| sed "s/[^a-zA-Z .,\-_'\"/?!]//g")"\"/>"
+					else
+						jTrim=$(echo "$(echo ${j#*SB:} | sed 's/^ *//;s/$//')" | sed 's/ \[\([A-Za-z0-9][A-Za-z0-9]*\)\]//')
+						sideboard=$sideboard"\n        <card number=\""${jTrim%% *}"\" price=\"0\" name=\""$(echo ${jTrim#* }| sed "s/[^a-zA-Z .,\-_'\"/?!]//g")"\"/>"
+					fi
+				fi
+			done
+		printf $codHead$main$sideText$sideboard$codFoot #> "$codName"
+	done
+unset IFS
