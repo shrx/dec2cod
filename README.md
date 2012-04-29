@@ -1,7 +1,6 @@
 dec2cod
 =======
 dec2cod is a simple bash script to convert Magic: The Gathering™ decks from `.dec` and `.mwDeck` (used by [Magic Workstation][1]) to `.cod` (used by [Cockatrice][2]).
-This is done using libcaca's image conversion tool, img2txt.
 
 [1]: http://www.magicworkstation.com/
 [2]: http://cockatrice.de/index.php?a=project
